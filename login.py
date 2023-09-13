@@ -19,7 +19,6 @@ from getpass import getpass
 
 import requests
 from bs4 import BeautifulSoup
-from requests import Response
 
 AUTH_URL = "http://www.gstatic.com/generate_204"
 
@@ -29,9 +28,12 @@ with open(".credintials", "r") as f:
 
 def connect(username, password) -> None:
 	login_url: str = requests.get(AUTH_URL).url
-	response: Response = requests.get(login_url)
+	response = requests.get(login_url)
 	soup = BeautifulSoup(response.text, "html.parser")
 	authenticate = soup.find("input", {"name": "magic"})
+	if authenticate is None:
+		print("❗ Some error occured! Maybe you are already loggedin?")
+		exit(1)
 
 	login_data = {
 		"4Tredir": AUTH_URL,
@@ -40,10 +42,11 @@ def connect(username, password) -> None:
 		"password": password,
 	}
 
-	response: Response = requests.post(login_url, data=login_data)
+	response = requests.post(login_url, data=login_data)
 
 	if "Authentication failed" in response.text:
 		print("❌ Authentication failed!")
+		exit(1)
 	else:
 		print("✔️ CU Internet Authentication successful!")
 
