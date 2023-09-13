@@ -5,51 +5,48 @@ import requests
 from bs4 import BeautifulSoup
 from requests import Response
 
-BASE_LOGIN_URL = "http://172.16.2.1:1000"
-HEADER_KEY = "41665a725d5a5fb0"
+AUTH_URL = "http://www.gstatic.com/generate_204"
 
 with open(".credintials", "r") as f:
     UID = f.readline().split("=")[-1].strip()
     PASSWORD = f.readline().split("=")[-1].strip()
 
-parser = argparse.ArgumentParser()
-
-parser.add_argument("-u", "--uid", type=str)
-parser.add_argument("-p", "--password", action="store_true")
-
-login_url = BASE_LOGIN_URL + "/login?" + HEADER_KEY
-response: Response = requests.get(login_url)
-soup = BeautifulSoup(response.text, "html.parser")
-authenticate = soup.find("input", {"name": "magic"})
-
-
 def connect(username, password) -> None:
-    login_data = {
-        "4Tredir": login_url,
-        "magic": authenticate["value"],
-        "username": username,
-        "password": password,
-    }
+	login_url: str = requests.get(AUTH_URL).url
+	response: Response = requests.get(login_url)
+	soup = BeautifulSoup(response.text, "html.parser")
+	authenticate = soup.find("input", {"name": "magic"})
 
-    response: Response = requests.post(BASE_LOGIN_URL, data=login_data)
+	login_data = {
+		"4Tredir": AUTH_URL,
+		"magic": authenticate["value"],
+		"username": username,
+		"password": password,
+	}
 
-    if "Authentication failed" in response.text:
-        print("❌ Authentication failed!")
-    else:
-        print("✔️ CU Internet Authentication successful!")
+	response: Response = requests.post(login_url, data=login_data)
+
+	if "Authentication failed" in response.text:
+		print("❌ Authentication failed!")
+	else:
+		print("✔️ CU Internet Authentication successful!")
 
 
 if __name__ == "__main__":
-    args = parser.parse_args()
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-u", "--uid", type=str)
+	parser.add_argument("-p", "--password", action="store_true")
 
-    if args.uid:
-        UID: str = args.uid.upper()
+	args = parser.parse_args()
 
-    try:
-        if args.password:
-            PASSWORD: str = getpass(prompt="CU Internet Password : ")
+	if args.uid:
+		UID: str = args.uid.upper()
 
-        connect(UID, PASSWORD)
+	try:
+		if args.password:
+			PASSWORD: str = getpass(prompt="CU Internet Password : ")
 
-    except KeyboardInterrupt:
-        print("\n❗ Connection Interrupted")
+		connect(UID, PASSWORD)
+
+	except KeyboardInterrupt:
+		print("\n❗ Connection Interrupted")
