@@ -19,25 +19,28 @@ from getpass import getpass
 
 import requests
 from bs4 import BeautifulSoup
+from requests import Response
 
-AUTH_URL = "http://www.gstatic.com/generate_204"
+from .config import Config
+from .notification import notify
 
 with open(".credintials", "r") as f:
     UID = f.readline().split("=")[-1].strip()
     PASSWORD = f.readline().split("=")[-1].strip()
 
 def connect(username, password) -> None:
-	login_url: str = requests.get(AUTH_URL).url
-	response = requests.get(login_url)
+	login_url: str = requests.get(Config.AUTH_URL).url
+	response: Response = requests.get(login_url)
+
 	soup = BeautifulSoup(response.text, "html.parser")
 	authenticate = soup.find("input", {"name": "magic"})
 	if authenticate is None:
-		print("❗ Some error occured! Maybe you are already loggedin?")
+		notify(Config.Messg.UNKNOWN)
 		exit(1)
 
-	login_data = {
-		"4Tredir": AUTH_URL,
-		"magic": authenticate["value"],
+	login_data: dict[str, str] = {
+		"4Tredir": Config.AUTH_URL,
+		"magic": str(authenticate["value"]),
 		"username": username,
 		"password": password,
 	}
@@ -45,10 +48,11 @@ def connect(username, password) -> None:
 	response = requests.post(login_url, data=login_data)
 
 	if "Authentication failed" in response.text:
-		print("❌ Authentication failed!")
+		notify(Config.Messg.FAILED)
 		exit(1)
 	else:
-		print("✔️ CU Internet Authentication successful!")
+		notify(Config.Messg.SUCCESS)
+		exit(0)
 
 
 if __name__ == "__main__":
@@ -68,4 +72,4 @@ if __name__ == "__main__":
 		connect(UID, PASSWORD)
 
 	except KeyboardInterrupt:
-		print("\n❗ Connection Interrupted")
+		notify(Config.Messg.INTERRUPT)
