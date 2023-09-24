@@ -1,4 +1,4 @@
-#
+
 # SPDX-License-Identifier: MIT
 # --------------------------------------------------------------
 #
@@ -14,6 +14,15 @@
 # --------------------------------------------------------------
 
 
-cd /home/encryptedbee/tesla/projects/cu_internet_auth
+from notify import notification
+from .config import Config, Messg
 
-python authentication.py "$@"
+def notify(msg: Messg) -> None:
+	print(msg.summary)
+	print(msg.description)
+	notification(
+		summary = msg.summary,
+		message = msg.description,
+		app_name = Config.APP_NAME,
+		timeout = Config.NOTIFICATION_TIMEOUT,
+	)

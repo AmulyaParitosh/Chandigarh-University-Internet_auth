@@ -1,4 +1,4 @@
-#
+
 # SPDX-License-Identifier: MIT
 # --------------------------------------------------------------
 #
@@ -14,6 +14,4 @@
 # --------------------------------------------------------------
 
 
-cd /home/encryptedbee/tesla/projects/cu_internet_auth
-
-python authentication.py "$@"
+from .login import authenticate

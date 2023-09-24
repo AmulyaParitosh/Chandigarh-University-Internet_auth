@@ -24,9 +24,6 @@ from requests import Response
 from .config import Config
 from .notification import notify
 
-with open(".credintials", "r") as f:
-    UID = f.readline().split("=")[-1].strip()
-    PASSWORD = f.readline().split("=")[-1].strip()
 
 def connect(username, password) -> None:
 	login_url: str = requests.get(Config.AUTH_URL).url
@@ -55,7 +52,11 @@ def connect(username, password) -> None:
 		exit(0)
 
 
-if __name__ == "__main__":
+def authenticate() -> None:
+	with open(".credintials", "r") as f:
+		UID = f.readline().split("=")[-1].strip()
+		PASSWORD = f.readline().split("=")[-1].strip()
+
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-u", "--uid", type=str)
 	parser.add_argument("-p", "--password", action="store_true")

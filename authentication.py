@@ -14,13 +14,7 @@
 # --------------------------------------------------------------
 
 
-from PyQt6.QtWidgets import QMessageBox
+from src import authenticate
 
-
-def notify(message: str) -> None:
-	print(message)
-
-	dlg = QMessageBox()
-	dlg.setWindowTitle("CU-net-Authenticator INFO")
-	dlg.setText(message)
-	dlg.exec()
+if __name__ == "__main__":
+	authenticate()
