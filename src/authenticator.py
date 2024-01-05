@@ -16,14 +16,15 @@
 import argparse
 from getpass import getpass
 
+from .config import Config
 from .notification import Notification
 from .scripts import login, logout, status
 
 
 def authenticate() -> None:
-    with open(".credintials", "r") as f:
-        UID = f.readline().split("=")[-1].strip()
-        PASSWORD = f.readline().split("=")[-1].strip()
+    with Config.credentials_path.open("r", encoding="utf-8") as file:
+        UID = file.readline().split("=")[-1].strip()
+        PASSWORD = file.readline().split("=")[-1].strip()
 
     parser = argparse.ArgumentParser()
     parser.add_argument("mode", choices=("login", "logout", "status"))

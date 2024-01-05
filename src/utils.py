@@ -15,8 +15,9 @@
 import json
 from enum import Enum
 from io import UnsupportedOperation
-from pathlib import Path
 from typing import Any
+
+from .config import Config
 
 
 def singleton(cls):
@@ -37,10 +38,8 @@ class State(Enum):
 
 @singleton
 class AuthStatus:
-    __file_path = Path("src/auth")
-
     def __init__(self) -> None:
-        with self.__file_path.open("w", encoding="utf-8") as file:
+        with Config.auth_state_path.open("w", encoding="utf-8") as file:
             try:
                 loaded_data: dict[str, Any] = json.load(file)
             except UnsupportedOperation:

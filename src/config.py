@@ -13,7 +13,13 @@
 # --------------------------------------------------------------
 
 
+from pathlib import Path
+
+
 class Config:
     AUTH_URL = "http://www.gstatic.com/generate_204"
     APP_NAME = "CU Net Authenticator"
     NOTIFICATION_TIMEOUT = 5000
+
+    credentials_path = Path(".credentials")
+    auth_state_path = Path("src/auth")
