@@ -63,7 +63,7 @@ class AuthStatus:
         return f"State\t: {self.status.name} ({self.gstatic_code})\nUID\t: {self.uid}\n"
 
     def __del__(self) -> None:
-        with self.__file_path.open("w", encoding="utf-8") as file:
+        with Config.auth_state_path.open("w", encoding="utf-8") as file:
             json.dump(
                 {
                     "status": self.status.value,
@@ -72,6 +72,12 @@ class AuthStatus:
                 },
                 file,
             )
+
+
+def load_local_credentials() -> tuple[str, str]:
+    with Config.credentials_path.open("r", encoding="utf-8") as file:
+        loaded_data: dict[str, str] = json.load(file)
+    return loaded_data.get("UID"), loaded_data.get("PASSWORD")
 
 
 if __name__ == "__main__":
